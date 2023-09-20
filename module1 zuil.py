@@ -23,3 +23,4 @@ f.write(f'{naam};{bericht};{tijd},{station}')
 f.close()
 
 print('Bedankt voor je reactie.')
+
