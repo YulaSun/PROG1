@@ -4,8 +4,9 @@ print('Er zijn station Amsterdam, Den Haag, Utrecht!')
 station= input('Welke station ben je? \n')
 
 
-tijd=datetime.datetime.now()
-
+from datetime import datetime
+tijd=datetime.now()
+print('Het is nu:', tijd)
 
 vraag = input('Wil je anoniem? vul ja of nee: \n')
 if vraag == 'ja':
@@ -20,4 +21,5 @@ else:
 f=open("C:/Users/yulas/Documents/stationzuilen.txt",'a')
 f.write(f'{naam};{bericht};{tijd},{station}')
 f.close()
+
 print('Bedankt voor je reactie.')
