@@ -2,9 +2,11 @@
 print('Welkom. Berichten hier laten?')
 
 import random
-stations = ['Amsterdam','DenHaag','Utrecht']
+
+stations = ['Arnhem', 'Almere', 'Amersfoort', 'Almelo', 'Alkmaar', 'Apeldoorn', 'Assen', 'Amsterdam', 'Boxtel', 'Breda', 'Dordrecht', 'Delft', 'DeventerEnschede', 'Gouda', 'Groningen', 'Den Haag', 'Hengelo', 'Haarlem', 'Helmond', 'Hoorn', 'Heerlen', 'Den Bosch', 'Hilversum', 'Leiden', 'Lelystad', 'Leeuwarden', 'Maastricht', 'Nijmegen', 'Oss', 'Roermond', 'Roosendaal', 'Sittard', 'Tilburg', 'Utrecht', 'Venlo', 'Vlissingen', 'Zaandam', 'Zwolle', 'Zutphen']
+
 station=random.choice(stations)
-print(stations)
+print(station)
 
 
 from datetime import datetime

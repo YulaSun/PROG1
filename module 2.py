@@ -32,7 +32,7 @@ for bericht in list:
         beoordelingsdatum=now.strftime("%Y-%m-%d")
         beoordelingstijd=now.strftime("%H:%M")
 
-        connection_string = "host='localhost' dbname='Stationzuil' user='postgres' password='01250'"
+        connection_string = "host='172.187.168.178' dbname='stationzuil' user='postgres' password='01250'"
         conn = psycopg2.connect(connection_string)
         cursor = conn.cursor()
         query = """INSERT INTO Bericht (moderatornummer, naam, datum, tijd, station, bericht, beoordeling, beoordelingsdatum, beoordelingstijd) 
