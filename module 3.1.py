@@ -4,23 +4,25 @@ import psycopg2
 import requests
 import random
 
-
+# met tkinter zien we een scherm
 root = tk.Tk()
 root.title('NS Stationhal scherm')
 root.state('zoomed')
 root.configure(bg='light yellow')
 
-
+# verbinden met sql database
 connection_string = "host='172.187.168.178' dbname='stationzuil' user='postgres' password='01250'"
 conn = psycopg2.connect(connection_string)
 cursor = conn.cursor()
 
 def get_random_station():
+    # random een station halen om laten zien waar de klanten nu zijn
     cursor.execute("SELECT station FROM bericht ")
     stations = cursor.fetchall()
     return random.choice(stations)[0]
 
 def update_label():
+    # station met weer en tempuratuur. Hier gebruikt API en Label
     global random_station, label
     random_station = get_random_station()
 
@@ -45,8 +47,7 @@ label.pack(padx=20, pady=20)
 update_label()
 
 
-
-
+# verbinden met sql database en informatie uithalen over bericht
 cursor = conn.cursor()
 cursor.execute( """ SELECT naam, datum, tijd, station, bericht from bericht WHERE beoordeling = 'goedkeuren'
 ORDER BY datum DESC, tijd DESC LIMIT 5 """)
@@ -61,6 +62,8 @@ for row in result:
     station=row[3]
     bericht=row[4]
 
+
+    # met frame een rechthoek krijgen voor teksten
     my_frame = tk.Frame(root, borderwidth=2)
     my_frame.pack(padx=20, pady=20, side=LEFT)
 
@@ -70,13 +73,9 @@ for row in result:
     label_with_image = tk.Label(my_frame)
 
 
-
-
+    # informatie uithalen over faciliteiten van station
     cursor.execute(""" SELECT ov_bike, elevator, park_and_ride, toilet from station_service WHERE station_city = %s""",(station,))
-
-
     result = cursor.fetchall()
-
 
 
     image1 = PhotoImage(file='fiets1.png')
@@ -85,9 +84,10 @@ for row in result:
     image4 = PhotoImage(file='wc1.png')
     image_list = [image1, image2, image3, image4]
 
-
     label_list = []
 
+
+    # zoek naar of faciliteiten wel of niet bij de stations horen, tellen met 'cnt'
     cnt = 0
     for i in result:
         for j in i:
@@ -102,6 +102,8 @@ for row in result:
                     print("Invalid index: ", cnt)
             cnt += 1
 
+
+    # station van berichten met weer en temperatuur
     city = station
     api_key = '81dec3a863d004ec25feb9e2bc43f1e0'
     url = f'https://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}'
@@ -114,7 +116,6 @@ for row in result:
 
     temperatuur = int(temperatuur_kelvin - 273.15)
 
-
     weer=tk.Label(my_frame, font=("Arial", 12), fg="blue", text=f'{weather},\n{temperatuur}°C')
     weer.pack()
 
@@ -122,9 +123,6 @@ for row in result:
                       width=20, height=10, wraplength=200, justify="left")
     label2.pack(padx=10)
 
-
-
-
-
+# afsluiten
 root.mainloop()
 
