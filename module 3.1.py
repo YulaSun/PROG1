@@ -2,20 +2,51 @@ from tkinter import *
 import tkinter as tk
 import psycopg2
 import requests
+import random
 
 
 root = tk.Tk()
-image1= PhotoImage(file='fiets1.png')
-image2= PhotoImage(file='lift1.png')
-image3= PhotoImage(file='pr1.png')
-image4= PhotoImage(file='wc1.png')
-
-
+root.title('NS Stationhal scherm')
 root.state('zoomed')
+root.configure(bg='light yellow')
 
 
 connection_string = "host='172.187.168.178' dbname='stationzuil' user='postgres' password='01250'"
 conn = psycopg2.connect(connection_string)
+cursor = conn.cursor()
+
+def get_random_station():
+    cursor.execute("SELECT station FROM bericht ")
+    stations = cursor.fetchall()
+    return random.choice(stations)[0]
+
+def update_label():
+    global random_station, label
+    random_station = get_random_station()
+
+    api_key = '81dec3a863d004ec25feb9e2bc43f1e0'
+    url = f'https://api.openweathermap.org/data/2.5/weather?q={random_station}&appid={api_key}'
+    response = requests.get(url)
+    data = response.json()
+
+    weather = data["weather"][0]["description"]
+    temperatuur_kelvin = data["main"]["temp"]
+    temperatuur = int(temperatuur_kelvin - 273.15)
+
+    weerstation.config(text=f'{weather},\n{temperatuur}°C')
+    label.config(text=f"Beste reiziger \nWelkom op station {random_station}")
+
+weerstation = tk.Label(root, font=("Arial", 16), fg="blue", text="")
+weerstation.pack(padx=20, pady=20)
+
+label = tk.Label(root, text="", bg="light yellow", fg="black", font=("Arial", 26))
+label.pack(padx=20, pady=20)
+
+update_label()
+
+
+
+
 cursor = conn.cursor()
 cursor.execute( """ SELECT naam, datum, tijd, station, bericht from bericht WHERE beoordeling = 'goedkeuren'
 ORDER BY datum DESC, tijd DESC LIMIT 5 """)
@@ -33,7 +64,7 @@ for row in result:
     my_frame = tk.Frame(root, borderwidth=2)
     my_frame.pack(padx=20, pady=20, side=LEFT)
 
-    label1 = tk.Label(my_frame, text=f'{naam}  {datum},{tijd} \n {station}')
+    label1 = tk.Label(my_frame, font=("Arial", 12), bg="lightblue", fg="black", text=f'{naam}  {datum},{tijd} \n {station}')
     label1.pack(side=tk.TOP, padx=10)
 
     label_with_image = tk.Label(my_frame)
@@ -77,14 +108,18 @@ for row in result:
 
     response = requests.get(url)
     data = response.json()
-    print(data)
 
-    weather = data["weather"]
-    description = weather[0]["description"]
-    weer=tk.Label(my_frame, text=f'{description}')
+    weather = data["weather"][0]["description"]
+    temperatuur_kelvin = data["main"]["temp"]
+
+    temperatuur = int(temperatuur_kelvin - 273.15)
+
+
+    weer=tk.Label(my_frame, font=("Arial", 12), fg="blue", text=f'{weather},\n{temperatuur}°C')
     weer.pack()
 
-    label2 = tk.Label(my_frame, text=f'{bericht}', relief="solid", width=20, height=10)
+    label2 = tk.Label(my_frame, font=("Arial", 16), bg="lightblue", fg="black", text=f'{bericht}', relief="solid",
+                      width=20, height=10, wraplength=200, justify="left")
     label2.pack(padx=10)
 
 
